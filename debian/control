@@ -4,8 +4,7 @@ Priority: optional
 Maintainer: Marcel Gebhardt <marcel@codehardt.de>
 Build-Depends: debhelper (>= 10),
                dh-golang,
-               golang-any,
-               elasticsearch (>= 6.0)
+               golang-any
 Standards-Version: 4.1.1
 XS-Go-Import-Path: github.com/Codehardt/go-elasticsearch
 
