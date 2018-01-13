@@ -16,8 +16,8 @@ func init() {
 	if err := documentClient.Ping(); err != nil {
 		panic(err)
 	}
-	documentClient.DeleteIndex("go_unit_testing1")
-	documentClient.DeleteIndex("go_unit_testing2")
+	documentClient.DeleteIndex("testclient_insertgetdeletedocument")
+	documentClient.DeleteIndex("testclient_updatedocument")
 }
 
 func TestClient_InsertGetDeleteDocument(t *testing.T) {
@@ -26,10 +26,10 @@ func TestClient_InsertGetDeleteDocument(t *testing.T) {
 		"field2": "value2",
 		"field3": "value3",
 	}
-	if err := documentClient.InsertDocument("go_unit_testing1", "doc", "1", document, true); err != nil {
+	if err := documentClient.InsertDocument("testclient_insertgetdeletedocument", "doc", "1", document, true); err != nil {
 		t.Fatalf("could not insert document: %s", err)
 	}
-	result, err := documentClient.GetDocument("go_unit_testing1", "doc", "1")
+	result, err := documentClient.GetDocument("testclient_insertgetdeletedocument", "doc", "1")
 	if err != nil {
 		t.Fatalf("could not get document: %s", err)
 	}
@@ -40,10 +40,10 @@ func TestClient_InsertGetDeleteDocument(t *testing.T) {
 	} else {
 		t.Fatal("no _source")
 	}
-	if err := documentClient.DeleteDocument("go_unit_testing1", "doc", "1", true); err != nil {
+	if err := documentClient.DeleteDocument("testclient_insertgetdeletedocument", "doc", "1", true); err != nil {
 		t.Fatalf("could not delete document: %s", err)
 	}
-	_, err = documentClient.GetDocument("go_unit_testing1", "doc", "1")
+	_, err = documentClient.GetDocument("testclient_insertgetdeletedocument", "doc", "1")
 	if err != nil && strings.Contains(err.Error(), "http status 404") {
 		t.Logf("error as expected: %s", err)
 	} else {
@@ -57,13 +57,13 @@ func TestClient_UpdateDocument(t *testing.T) {
 		"field2": "value2",
 		"field3": "value3",
 	}
-	if err := documentClient.InsertDocument("go_unit_testing2", "doc", "1", document, true); err != nil {
+	if err := documentClient.InsertDocument("testclient_updatedocument", "doc", "1", document, true); err != nil {
 		t.Fatalf("could not insert document: %s", err)
 	}
-	if err := documentClient.UpdateDocument("go_unit_testing2", "doc", "1", "ctx._source.field1 = 'valueX'", true); err != nil {
+	if err := documentClient.UpdateDocument("testclient_updatedocument", "doc", "1", "ctx._source.field1 = 'valueX'", true); err != nil {
 		t.Fatalf("could not update document: %s", err)
 	}
-	result, err := documentClient.GetDocument("go_unit_testing2", "doc", "1")
+	result, err := documentClient.GetDocument("testclient_updatedocument", "doc", "1")
 	if err != nil {
 		t.Fatalf("could not get document: %s", err)
 	}

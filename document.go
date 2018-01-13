@@ -7,6 +7,17 @@ import (
 	"bytes"
 )
 
+type Order struct {
+	Field string
+	Order string // asc or desc
+}
+
+func (o *Order) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		o.Field: o.Order,
+	})
+}
+
 func (c *Client) InsertDocument(index, doctype, id string, document map[string]interface{}, refresh bool) error {
 	b, err := json.Marshal(document)
 	if err != nil {
@@ -34,10 +45,15 @@ func (c *Client) GetDocument(index, doctype, id string) (map[string]interface{},
 	return result, nil
 }
 
-func (c *Client) GetDocuments(index, doctype string, query map[string]interface{}, from int64, size int64) ([]map[string]interface{}, int64, error) {
-	b, err := json.Marshal(map[string]interface{}{
-		"query": query,
-	})
+func (c *Client) GetDocuments(index, doctype string, query map[string]interface{}, from int64, size int64, order *Order) ([]map[string]interface{}, int64, error) {
+	request := map[string]interface{}{}
+	if query != nil {
+		request["query"] = query
+	}
+	if order != nil {
+		request["sort"] = []*Order{order}
+	}
+	b, err := json.Marshal(request)
 	if err != nil {
 		return nil, 0, fmt.Errorf("could not marshal query: %s", err)
 	}
