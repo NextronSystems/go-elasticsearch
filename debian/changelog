@@ -1,3 +1,9 @@
+go-elasticsearch (6.20180113.2) unstable; urgency=medium
+
+  * Fixed aggregate test
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Sat, 13 Jan 2018 16:09:00 +0200
+
 go-elasticsearch (6.20180113.1) unstable; urgency=medium
 
   * Added aggregate
