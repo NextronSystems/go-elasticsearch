@@ -1,3 +1,10 @@
+go-elasticsearch (6.20180113.1) unstable; urgency=medium
+
+  * Added aggregate
+  * Added order
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Sat, 13 Jan 2018 15:50:00 +0200
+
 go-elasticsearch (6.20180113.0) unstable; urgency=medium
 
   * Initial
