@@ -1,6 +1,9 @@
 package elasticsearch
 
-import "testing"
+import (
+	"testing"
+	"encoding/json"
+)
 
 var aggregateClient *Client
 
@@ -14,6 +17,30 @@ func init() {
 		panic(err)
 	}
 	aggregateClient.DeleteIndex("testclient_termaggregate")
+	template, _ := json.Marshal(map[string]interface{}{
+		"index_patterns": []string{"*"},
+		"settings": map[string]interface{}{
+			"number_of_shards": 1,
+			"number_of_replicas": 0,
+		},
+		"mappings": map[string]interface{}{
+			"doc": map[string]interface{}{
+				"dynamic_templates": []interface{}{
+					map[string]interface{}{
+						"string_fields": map[string]interface{}{
+							"mapping": map[string]interface{}{
+								"type": "keyword",
+								"index": true,
+							},
+							"match_mapping_type": "string",
+							"match": "*",
+						},
+					},
+				},
+			},
+		},
+	})
+	aggregateClient.put("_template/doc", template)
 }
 
 func TestClient_TermAggregate(t *testing.T) {
