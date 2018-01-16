@@ -69,3 +69,48 @@ func (c *Client) TermAggregate(index, doctype string, query map[string]interface
 	}
 	return result.Aggregations, nil
 }
+
+func (c *Client) RangeAggregate(index, doctype string, query map[string]interface{}, field string) (float64, float64, error) {
+	request := map[string]interface{}{
+		"size": 0,
+		"aggs": map[string]interface{}{
+			"min_"+field: map[string]interface{}{
+				"min": map[string]interface{}{
+					"field": field,
+				},
+			},
+			"max_"+field: map[string]interface{}{
+				"max": map[string]interface{}{
+					"field": field,
+				},
+			},
+		},
+	}
+	if query != nil {
+		request["query"] = query
+	}
+	b, err := json.Marshal(request)
+	if err != nil {
+		return 0, 0, fmt.Errorf("could not marshal request: %s", err)
+	}
+	apipath := path.Join(index, doctype) + "/_search"
+	res, err := c.get(apipath, b)
+	if err != nil {
+		return 0, 0, fmt.Errorf("could not get aggregations: %s", err)
+	}
+	result := struct{
+		Aggregations map[string]struct{
+			Value float64 `json:"value"`
+		} `json:"aggregations"`
+	}{}
+	decoder := json.NewDecoder(bytes.NewReader(res))
+	if err := decoder.Decode(&result); err != nil {
+		return 0, 0, fmt.Errorf("could not decode result: %s", err)
+	}
+	minValue, ok1 := result.Aggregations["min_"+field]
+	maxValue, ok2 := result.Aggregations["max_"+field]
+	if !ok1 || !ok2 {
+		return 0, 0, fmt.Errorf("min or max value not a number: (%#v)", result.Aggregations)
+	}
+	return minValue.Value, maxValue.Value, nil
+}

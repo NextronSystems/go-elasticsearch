@@ -44,19 +44,19 @@ func init() {
 }
 
 func TestClient_TermAggregate(t *testing.T) {
-	aggregateClient.InsertDocument("testclient_updatedocument", "doc", "1", map[string]interface{}{
+	aggregateClient.InsertDocument("testclient_termaggregate", "doc", "1", map[string]interface{}{
 		"field1": "value1",
 		"field2": "value2",
 	}, true)
-	aggregateClient.InsertDocument("testclient_updatedocument", "doc", "2", map[string]interface{}{
+	aggregateClient.InsertDocument("testclient_termaggregate", "doc", "2", map[string]interface{}{
 		"field1": "value1",
 		"field2": "value3",
 	}, true)
-	aggregateClient.InsertDocument("testclient_updatedocument", "doc", "3", map[string]interface{}{
+	aggregateClient.InsertDocument("testclient_termaggregate", "doc", "3", map[string]interface{}{
 		"field1": "value1",
 		"field2": "value4",
 	}, true)
-	result, err := aggregateClient.TermAggregate("testclient_updatedocument", "doc", nil, NewTermAggregations([]*TermAggregation{
+	result, err := aggregateClient.TermAggregate("testclient_termaggregate", "doc", nil, NewTermAggregations([]*TermAggregation{
 		{Field: "field1", Size: 10},
 		{Field: "field2", Size: 10},
 	}))
@@ -70,5 +70,19 @@ func TestClient_TermAggregate(t *testing.T) {
 	field2 := result["field2"].Buckets
 	if len(field2) != 3 || field2[0].Count != 1 || field2[1].Count != 1 || field2[2].Count != 1 {
 		t.Fatalf("wrong field2 aggs: %#v", field2)
+	}
+}
+
+func TestClient_RangeAggregate(t *testing.T) {
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "1", map[string]interface{}{"field1": 10}, true)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "2", map[string]interface{}{"field1": 100}, true)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "3", map[string]interface{}{"field1": 1000}, true)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "4", map[string]interface{}{"field1": 1}, true)
+	minValue, maxValue, err := aggregateClient.RangeAggregate("testclient_rangeaggregate", "doc", nil, "field1")
+	if err != nil {
+		t.Fatalf("could not range aggregate: %s", err)
+	}
+	if minValue != 1.0 || maxValue != 1000.0 {
+		t.Fatalf("wrong range, expected %f - %f, got: %f - %f", 1.0, 1000.0, minValue, maxValue)
 	}
 }
