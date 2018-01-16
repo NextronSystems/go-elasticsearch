@@ -1,3 +1,9 @@
+go-elasticsearch (6.20180116.0) unstable; urgency=medium
+
+  * Added range aggregation
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Tue, 16 Jan 2018 10:28:00 +0200
+
 go-elasticsearch (6.20180113.2) unstable; urgency=medium
 
   * Fixed aggregate test
