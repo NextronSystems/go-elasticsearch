@@ -76,12 +76,16 @@ func (c *Client) GetDocuments(index, doctype string, query map[string]interface{
 	return result.Hits.Hits, result.Hits.Total, nil
 }
 
-func (c * Client) UpdateDocument(index, doctype, id string, painlessScript string, refresh bool) error {
+func (c * Client) UpdateDocument(index, doctype, id string, painlessScript string, params map[string]interface{}, refresh bool) error {
+	script := map[string]interface{}{
+		"source": painlessScript,
+		"lang": "painless",
+	}
+	if params != nil {
+		script["params"] = params
+	}
 	b, err := json.Marshal(map[string]interface{}{
-		"script": map[string]interface{}{
-			"source": painlessScript,
-			"lang": "painless",
-		},
+		"script": script,
 	})
 	if err != nil {
 		return fmt.Errorf("could not marshal the changes: %s", err)
@@ -93,13 +97,17 @@ func (c * Client) UpdateDocument(index, doctype, id string, painlessScript strin
 	return nil
 }
 
-func (c *Client) UpdateDocuments(index, doctype string, query map[string]interface{}, painlessScript string) error {
+func (c *Client) UpdateDocuments(index, doctype string, query map[string]interface{}, painlessScript string, params map[string]interface{}) error {
+	script := map[string]interface{}{
+		"source": painlessScript,
+		"lang": "painless",
+	}
+	if params != nil {
+		script["params"] = params
+	}
 	b, err := json.Marshal(map[string]interface{}{
 		"query": query,
-		"script": map[string]interface{}{
-			"source": painlessScript,
-			"lang": "painless",
-		},
+		"script": script,
 	})
 	if err != nil {
 		return fmt.Errorf("could not marshal the query: %s", err)

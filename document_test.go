@@ -60,7 +60,7 @@ func TestClient_UpdateDocument(t *testing.T) {
 	if err := documentClient.InsertDocument("testclient_updatedocument", "doc", "1", document, true); err != nil {
 		t.Fatalf("could not insert document: %s", err)
 	}
-	if err := documentClient.UpdateDocument("testclient_updatedocument", "doc", "1", "ctx._source.field1 = 'valueX'", true); err != nil {
+	if err := documentClient.UpdateDocument("testclient_updatedocument", "doc", "1", "ctx._source.field1 = params.value", map[string]interface{}{"value": "valueX"}, true); err != nil {
 		t.Fatalf("could not update document: %s", err)
 	}
 	result, err := documentClient.GetDocument("testclient_updatedocument", "doc", "1")
