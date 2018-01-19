@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"bytes"
+	"errors"
 )
 
 type TermAggregations map[string]*TermAggregation
@@ -110,7 +111,46 @@ func (c *Client) RangeAggregate(index, doctype string, query map[string]interfac
 	minValue, ok1 := result.Aggregations["min_"+field]
 	maxValue, ok2 := result.Aggregations["max_"+field]
 	if !ok1 || !ok2 {
-		return 0, 0, fmt.Errorf("min or max value not a number: (%#v)", result.Aggregations)
+		return 0, 0, errors.New("min or max value not a number")
 	}
 	return minValue.Value, maxValue.Value, nil
+}
+
+func (c *Client) CardinalityAggregate(index, doctype string, query map[string]interface{}, field string) (int64, error) {
+	request := map[string]interface{}{
+		"size": 0,
+		"aggs": map[string]interface{}{
+			"count_"+field: map[string]interface{}{
+				"cardinality": map[string]interface{}{
+					"field": field,
+				},
+			},
+		},
+	}
+	if query != nil {
+		request["query"] = query
+	}
+	b, err := json.Marshal(request)
+	if err != nil {
+		return 0, fmt.Errorf("could not marshal request: %s", err)
+	}
+	apipath := path.Join(index, doctype) + "/_search"
+	res, err := c.get(apipath, b)
+	if err != nil {
+		return 0, fmt.Errorf("could not get aggregations: %s", err)
+	}
+	result := struct{
+		Aggregations map[string]struct{
+			Value int64 `json:"value"`
+		} `json:"aggregations"`
+	}{}
+	decoder := json.NewDecoder(bytes.NewReader(res))
+	if err := decoder.Decode(&result); err != nil {
+		return 0, fmt.Errorf("could not decode result: %s", err)
+	}
+	value, ok := result.Aggregations["count_"+field]
+	if !ok {
+		return 0, errors.New("could not find count of field")
+	}
+	return value.Value, nil
 }

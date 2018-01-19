@@ -17,6 +17,8 @@ func init() {
 		panic(err)
 	}
 	aggregateClient.DeleteIndex("testclient_termaggregate")
+	aggregateClient.DeleteIndex("testclient_rangeaggregate")
+	aggregateClient.DeleteIndex("testclient_cardinalityaggregate")
 	template, _ := json.Marshal(map[string]interface{}{
 		"index_patterns": []string{"*"},
 		"settings": map[string]interface{}{
@@ -84,5 +86,33 @@ func TestClient_RangeAggregate(t *testing.T) {
 	}
 	if minValue != 1.0 || maxValue != 1000.0 {
 		t.Fatalf("wrong range, expected %f - %f, got: %f - %f", 1.0, 1000.0, minValue, maxValue)
+	}
+	minValue2, maxValue2, err := aggregateClient.RangeAggregate("testclient_rangeaggregate", "doc", nil, "field2")
+	if err != nil {
+		t.Fatalf("could not range aggregate: %s", err)
+	}
+	if minValue2 != 0.0 || maxValue2 != 0.0 {
+		t.Fatalf("wrong range, expected %f - %f, got: %f - %f", 0.0, 0.0, minValue2, maxValue2)
+	}
+}
+
+func TestClient_CardinalityAggregate(t *testing.T) {
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "1", map[string]interface{}{"field1": 10}, true)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "2", map[string]interface{}{"field1": 10}, true)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "3", map[string]interface{}{"field1": 100}, true)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "4", map[string]interface{}{"field1": 1}, true)
+	value, err := aggregateClient.CardinalityAggregate("testclient_cardinalityaggregate", "doc", nil, "field1")
+	if err != nil {
+		t.Fatalf("could not cardinality aggregate: %s", err)
+	}
+	if value != 3 {
+		t.Fatalf("wrong cardinality, expected 3, got: %d", value)
+	}
+	value2, err := aggregateClient.CardinalityAggregate("testclient_cardinalityaggregate", "doc", nil, "field2")
+	if err != nil {
+		t.Fatalf("could not cardinality aggregate: %s", err)
+	}
+	if value2 != 0 {
+		t.Fatalf("wrong cardinality, expected 0, got: %d", value2)
 	}
 }
