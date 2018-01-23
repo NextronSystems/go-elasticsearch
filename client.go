@@ -47,7 +47,7 @@ func (c *Client) do(r *http.Request) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 	if log.DebugMode() {
-		b, err := httputil.DumpResponse(r, true)
+		b, err := httputil.DumpResponse(resp, true)
 		if err != nil {
 			b = []byte(err.Error())
 		}
