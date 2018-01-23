@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"net/http/httputil"
 )
 
 type Client struct {
@@ -32,12 +33,26 @@ func (c *Client) Ping() error {
 }
 
 func (c *Client) do(r *http.Request) ([]byte, error) {
+	if log.DebugMode() {
+		b, err := httputil.DumpRequest(r, true)
+		if err != nil {
+			b = []byte(err.Error())
+		}
+		log.Debugf("Elasticsearch Request: %s", string(b))
+	}
 	client := &http.Client{}
 	resp, err := client.Do(r)
 	if err != nil {
 		return nil, fmt.Errorf("could not do request: %s", err)
 	}
 	defer resp.Body.Close()
+	if log.DebugMode() {
+		b, err := httputil.DumpResponse(r, true)
+		if err != nil {
+			b = []byte(err.Error())
+		}
+		log.Debugf("Elasticsearch Response: %s", string(b))
+	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		if body, _ := ioutil.ReadAll(resp.Body); body != nil {
 			return nil, fmt.Errorf("http status %d (%s)", resp.StatusCode, string(body))
