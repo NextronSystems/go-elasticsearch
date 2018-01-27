@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/Codehardt/go-elasticsearch.svg?branch=master)](https://travis-ci.org/Codehardt/go-elasticsearch)
+[![GoDoc](https://godoc.org/github.com/Codehardt/go-elasticsearch?status.svg)](https://godoc.org/github.com/Codehardt/go-elasticsearch)
 
 ## Features
 
