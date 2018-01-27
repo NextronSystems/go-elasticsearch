@@ -30,8 +30,7 @@ func ExampleSetLogger() {
 	f.Debug = true
 	log.Infof("Hello, this message will be shown.\n")
 	log.Debugf("DEBUG: Hello, this message will be shown.\n")
-	// Output:
-	// Hello, this message will be shown.
+	// Output: Hello, this message will be shown.
 	// Hello, this message will be shown.
 	// DEBUG: Hello, this message will be shown.
 }
