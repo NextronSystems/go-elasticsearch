@@ -1,5 +1,8 @@
 # Simple Elasticsearch 6.x API for Golang
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/Codehardt/go-elasticsearch.svg?branch=master)](https://travis-ci.org/Codehardt/go-elasticsearch)
+
 ## Features
 
 - Document 
