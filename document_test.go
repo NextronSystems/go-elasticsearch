@@ -5,7 +5,6 @@ import (
 	"strings"
 	"fmt"
 	"sync"
-	"encoding/json"
 )
 
 var documentClient *Client
