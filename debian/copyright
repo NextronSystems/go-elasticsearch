@@ -3,4 +3,4 @@ Upstream-Name: github.com/Codehardt/go-elasticsearch
 
 Files: *
 Copyright: 2018 Marcel Gebhardt
-License: TBD
+License: MIT
