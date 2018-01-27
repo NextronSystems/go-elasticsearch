@@ -9,17 +9,13 @@ import (
 	"net/http/httputil"
 )
 
-/*
- * Client is the api client for Elasticsearch.
- */
+// Client is the api client for Elasticsearch.
 type Client struct {
 	baseURL *url.URL
 }
 
-/*
- * Open creates a new Client instance based on a baseURL.
- * This function does not test the connection. Use Ping() for connection tests.
- */
+// Open creates a new Client instance based on a baseURL.
+// This function does not test the connection. Use Ping() for connection tests.
 func Open(baseURL string) (*Client, error) {
 	var (
 		client = &Client{}
@@ -31,9 +27,7 @@ func Open(baseURL string) (*Client, error) {
 	return client, nil
 }
 
-/*
- * Ping is the connection test for the Elasticsearch client.
- */
+// Ping is the connection test for the Elasticsearch client.
 func (c *Client) Ping() error {
 	_, err := c.get("", nil)
 	if err != nil {

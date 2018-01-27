@@ -6,9 +6,7 @@ import (
 	"path"
 )
 
-/*
- * AddTemplate adds a new template to Elasticsearch.
- */
+// AddTemplate adds a new template to Elasticsearch.
 func (c *Client) AddTemplate(id string, template map[string]interface{}) error {
 	b, err := json.Marshal(template)
 	if err != nil {
@@ -21,9 +19,7 @@ func (c *Client) AddTemplate(id string, template map[string]interface{}) error {
 	return nil
 }
 
-/*
- * DeleteTemplate deletes a template.
- */
+// DeleteTemplate deletes a template.
 func (c *Client) DeleteTemplate(id string) error {
 	apipath := path.Join("_template", id)
 	if _, err := c.delete(apipath, nil); err != nil {
