@@ -18,6 +18,9 @@
   - Get documents by query (paging)
   - Get documents by query (scroll)
   
+- Bulk
+  - Insert documents (Coming soon)
+  
 - Index
   - Delete index
   - Refresh index
