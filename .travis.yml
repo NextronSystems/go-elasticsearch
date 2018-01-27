@@ -1,9 +1,9 @@
 language: go
-  go:
-    - 1.7
-    - 1.8
-    - 1.9
-  before_script:
-    - sleep 15
-  before_install:
-    - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.deb && sudo dpkg -i --force-confnew elasticsearch-6.0.0.deb && sudo service elasticsearch restart
+go_import_path: github.com/Codehardt/go-elasticsearch
+notifications:
+  email: false
+  slack: nextron-systems:Q1f2uRSIFH0Sf5IzT884z4YR
+before_install:
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.deb && sudo dpkg -i --force-confnew elasticsearch-6.0.0.deb && sudo service elasticsearch restart
+before_script:
+  - sleep 15
