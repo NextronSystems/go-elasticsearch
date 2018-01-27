@@ -1,4 +1,4 @@
-# Simple Elasticsearch API for Golang
+# Simple Elasticsearch 6.x API for Golang
 
 ## Features
 
