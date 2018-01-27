@@ -8,6 +8,9 @@ const (
 	StatusRed    = "red"
 )
 
+/*
+ * Health returns the health status of Elasticsearch (green, yellow, red).
+ */
 func (c *Client) Health() (string, error) {
 	res, err := c.get("_cluster/health", nil)
 	if err != nil {

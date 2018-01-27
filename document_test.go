@@ -3,6 +3,9 @@ package elasticsearch
 import (
 	"testing"
 	"strings"
+	"fmt"
+	"sync"
+	"encoding/json"
 )
 
 var documentClient *Client
@@ -18,6 +21,8 @@ func init() {
 	}
 	documentClient.DeleteIndex("testclient_insertgetdeletedocument")
 	documentClient.DeleteIndex("testclient_updatedocument")
+	documentClient.DeleteIndex("testclient_scrolldocuments")
+	documentClient.DeleteIndex("testclient_scrolldocuments2")
 }
 
 func TestClient_InsertGetDeleteDocument(t *testing.T) {
@@ -73,5 +78,59 @@ func TestClient_UpdateDocument(t *testing.T) {
 		}
 	} else {
 		t.Fatal("no _source")
+	}
+}
+
+func TestClient_ScrollDocuments(t *testing.T) {
+	for i := 0; i < 1001; i++ {
+		if err := documentClient.InsertDocument("testclient_scrolldocuments", "doc", fmt.Sprint(i), map[string]interface{}{
+			"field": "value",
+		}, false); err != nil {
+			t.Fatalf("could not insert document: %s", err)
+		}
+	}
+	documentClient.Refresh("testclient_scrolldocuments")
+	docs := make(chan map[string]interface{}, 1)
+	wg := sync.WaitGroup{}
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		if err := documentClient.ScrollDocuments("testclient_scrolldocuments", "doc", nil, docs); err != nil {
+			t.Fatalf("could not scroll documents: %s", err)
+		}
+	}()
+	var counter int
+	for range docs {
+		counter++
+	}
+	wg.Wait()
+	if counter != 1001 {
+		t.Fatalf("wrong count, expected 1001, got: %d", counter)
+	}
+}
+
+func TestClient_ScrollDocuments2(t *testing.T) {
+	if err := documentClient.InsertDocument("testclient_scrolldocuments2", "doc", "1", map[string]interface{}{
+		"field": "value",
+	}, false); err != nil {
+		t.Fatalf("could not insert document: %s", err)
+	}
+	documentClient.Refresh("testclient_scrolldocuments2")
+	docs := make(chan map[string]interface{}, 1)
+	wg := sync.WaitGroup{}
+	go func() {
+		wg.Add(1)
+		defer wg.Done()
+		if err := documentClient.ScrollDocuments("testclient_scrolldocuments2", "doc", nil, docs); err != nil {
+			t.Fatalf("could not scroll documents: %s", err)
+		}
+	}()
+	var counter int
+	for range docs {
+		counter++
+	}
+	wg.Wait()
+	if counter != 1 {
+		t.Fatalf("wrong count, expected 0, got: %d", counter)
 	}
 }

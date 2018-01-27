@@ -11,7 +11,7 @@ type Logger interface {
 }
 
 /*
- * SetLogger changes the logger for the thor_filter package.
+ * SetLogger changes the logger for the elasticsearch package.
  * By default, all messages are discarded.
  */
 func SetLogger(l Logger) {
@@ -34,7 +34,7 @@ func (d *discard) Infof(_ string, _ ...interface{}) {}
 func (d *discard) Debugf(_ string, _ ...interface{}) {}
 
 /*
- * Debugf will do nothing.
+ * DebugMode will return always false.
  */
 func (d *discard) DebugMode() bool {return false}
 
