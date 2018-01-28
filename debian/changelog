@@ -1,8 +1,15 @@
+go-elasticsearch (6.20180128.0) unstable; urgency=medium
+
+  * Added travis
+  * Added bulk import
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Sun, 28 Jan 2018 10:52:00 +0200
+
 go-elasticsearch (6.20180127.0) unstable; urgency=medium
 
   * Added comments
 
- -- Marcel Gebhardt <marcel@codehardt.de>  Tue, 23 Jan 2018 14:41:00 +0200
+ -- Marcel Gebhardt <marcel@codehardt.de>  Sat, 27 Jan 2018 09:30:00 +0200
 
 go-elasticsearch (6.20180123.1) unstable; urgency=medium
 
