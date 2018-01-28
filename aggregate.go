@@ -1,11 +1,11 @@
 package elasticsearch
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"path"
-	"bytes"
-	"errors"
 )
 
 // TermAggregations is a list of TermAggregation, allowing
@@ -26,14 +26,15 @@ func NewTermAggregations(aggs []*TermAggregation) TermAggregations {
 // the size is, the more accurate are the results.
 type TermAggregation struct {
 	Field string
-	Size int
+	Size  int
 }
 
+// MarshalJSON is the interface implementation for json Marshaler
 func (t *TermAggregation) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
 		"terms": map[string]interface{}{
 			"field": t.Field,
-			"size": t.Size,
+			"size":  t.Size,
 		},
 	})
 }
@@ -48,8 +49,8 @@ type TermAggregationResult struct {
 
 // Bucket contains how often a specific key was found in a term aggregation.
 type Bucket struct {
-	Key interface{} `json:"key"`
-	Count int `json:"doc_count"`
+	Key   interface{} `json:"key"`
+	Count int         `json:"doc_count"`
 }
 
 // TermAggregate term aggregates in a specific index. A query is optional.
@@ -70,7 +71,7 @@ func (c *Client) TermAggregate(index, doctype string, query map[string]interface
 	if err != nil {
 		return nil, fmt.Errorf("could not get aggregations: %s", err)
 	}
-	result := struct{
+	result := struct {
 		Aggregations TermAggregationResults `json:"aggregations"`
 	}{}
 	decoder := json.NewDecoder(bytes.NewReader(res))
@@ -87,12 +88,12 @@ func (c *Client) RangeAggregate(index, doctype string, query map[string]interfac
 	request := map[string]interface{}{
 		"size": 0,
 		"aggs": map[string]interface{}{
-			"min_"+field: map[string]interface{}{
+			"min_" + field: map[string]interface{}{
 				"min": map[string]interface{}{
 					"field": field,
 				},
 			},
-			"max_"+field: map[string]interface{}{
+			"max_" + field: map[string]interface{}{
 				"max": map[string]interface{}{
 					"field": field,
 				},
@@ -111,8 +112,8 @@ func (c *Client) RangeAggregate(index, doctype string, query map[string]interfac
 	if err != nil {
 		return 0, 0, fmt.Errorf("could not get aggregations: %s", err)
 	}
-	result := struct{
-		Aggregations map[string]struct{
+	result := struct {
+		Aggregations map[string]struct {
 			Value float64 `json:"value"`
 		} `json:"aggregations"`
 	}{}
@@ -137,7 +138,7 @@ func (c *Client) CardinalityAggregate(index, doctype string, query map[string]in
 	request := map[string]interface{}{
 		"size": 0,
 		"aggs": map[string]interface{}{
-			"count_"+field: map[string]interface{}{
+			"count_" + field: map[string]interface{}{
 				"cardinality": map[string]interface{}{
 					"field": field,
 				},
@@ -156,8 +157,8 @@ func (c *Client) CardinalityAggregate(index, doctype string, query map[string]in
 	if err != nil {
 		return 0, fmt.Errorf("could not get aggregations: %s", err)
 	}
-	result := struct{
-		Aggregations map[string]struct{
+	result := struct {
+		Aggregations map[string]struct {
 			Value int64 `json:"value"`
 		} `json:"aggregations"`
 	}{}

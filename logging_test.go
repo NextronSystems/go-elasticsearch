@@ -2,7 +2,7 @@ package elasticsearch
 
 import "fmt"
 
-type FmtLogger struct{
+type FmtLogger struct {
 	Debug bool
 }
 

@@ -1,10 +1,10 @@
 package elasticsearch
 
 import (
-	"testing"
-	"strings"
 	"fmt"
+	"strings"
 	"sync"
+	"testing"
 )
 
 var documentClient *Client

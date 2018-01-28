@@ -31,13 +31,13 @@ func (c *Client) InsertDocuments(index string, doctype string, docs map[string]m
 	if err != nil {
 		return nil, fmt.Errorf("could not bulk import: %s", err)
 	}
-	bulkResult := struct{
-		Items []struct{
-			Index struct{
-			      Id string `json:"_id"`
-			      Status int `json:"status"`
-			      Error map[string]interface{} `json:"error"`
-		      	} `json:"index"`
+	bulkResult := struct {
+		Items []struct {
+			Index struct {
+				Id     string                 `json:"_id"`
+				Status int                    `json:"status"`
+				Error  map[string]interface{} `json:"error"`
+			} `json:"index"`
 		} `json:"items"`
 	}{}
 	if err := json.Unmarshal(res, &bulkResult); err != nil {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"net/http/httputil"
+	"net/url"
 )
 
 // Client is the api client for Elasticsearch.

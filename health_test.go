@@ -2,7 +2,6 @@ package elasticsearch
 
 import "testing"
 
-
 var healthClient *Client
 
 func init() {

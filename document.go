@@ -1,10 +1,10 @@
 package elasticsearch
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"path"
-	"bytes"
 )
 
 // Order can be used to define the order of the Elasticsearch result.
@@ -13,6 +13,7 @@ type Order struct {
 	Order string // asc or desc
 }
 
+// MarshalJSON is the interface implementation for json Marshaler
 func (o *Order) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
 		o.Field: o.Order,
@@ -23,7 +24,7 @@ func (o *Order) MarshalJSON() ([]byte, error) {
 // If the id already exists, the old document will be replaced.
 // If refresh is set to false, the result will be returned immediately.
 // If refresh is set to true, elasticsearch waits until all changes were done.
-// If multiple inserts are done and all changes have to be done before continueing,
+// If multiple inserts are done and all changes have to be done before continuing,
 // set refresh to false and call Refresh() after.
 func (c *Client) InsertDocument(index, doctype, id string, document map[string]interface{}, refresh bool) error {
 	b, err := json.Marshal(document)
@@ -76,10 +77,10 @@ func (c *Client) GetDocuments(index, doctype string, query map[string]interface{
 	decoder := json.NewDecoder(bytes.NewReader(b))
 	decoder.UseNumber()
 	result := struct {
-		Hits struct{
-			Total int64 `json:"total"`
-			Hits []map[string]interface{} `json:"hits"`
-		     } `json:"hits"`
+		Hits struct {
+			Total int64                    `json:"total"`
+			Hits  []map[string]interface{} `json:"hits"`
+		} `json:"hits"`
 	}{}
 	if err := decoder.Decode(&result); err != nil {
 		return nil, 0, fmt.Errorf("could not decode documents: %s", err)
@@ -91,10 +92,10 @@ func (c *Client) GetDocuments(index, doctype string, query map[string]interface{
 // It's recommended to use parameterized update scripts and pass the parameters in 'params'.
 // Then elasticsearch has to compile the script only once. Elasticsearch will also return
 // an error, if to many different scripts are executed in a small time interval.
-func (c * Client) UpdateDocument(index, doctype, id string, painlessScript string, params map[string]interface{}, refresh bool) error {
+func (c *Client) UpdateDocument(index, doctype, id string, painlessScript string, params map[string]interface{}, refresh bool) error {
 	script := map[string]interface{}{
 		"source": painlessScript,
-		"lang": "painless",
+		"lang":   "painless",
 	}
 	if params != nil {
 		script["params"] = params
@@ -119,13 +120,13 @@ func (c * Client) UpdateDocument(index, doctype, id string, painlessScript strin
 func (c *Client) UpdateDocuments(index, doctype string, query map[string]interface{}, painlessScript string, params map[string]interface{}) error {
 	script := map[string]interface{}{
 		"source": painlessScript,
-		"lang": "painless",
+		"lang":   "painless",
 	}
 	if params != nil {
 		script["params"] = params
 	}
 	b, err := json.Marshal(map[string]interface{}{
-		"query": query,
+		"query":  query,
 		"script": script,
 	})
 	if err != nil {
@@ -181,9 +182,9 @@ func (c *Client) ScrollDocuments(index, doctype string, query map[string]interfa
 func (c *Client) scrollDocuments(apipath string, req map[string]interface{}, docs chan map[string]interface{}, scrollId string) error {
 	scrollResult := struct {
 		ScrollId string `json:"_scroll_id"`
-		Hits struct{
-			     Hits []map[string]interface{} `json:"hits"`
-		     } `json:"hits"`
+		Hits     struct {
+			Hits []map[string]interface{} `json:"hits"`
+		} `json:"hits"`
 	}{}
 	b, err := json.Marshal(req)
 	if err != nil {
@@ -208,7 +209,7 @@ func (c *Client) scrollDocuments(apipath string, req map[string]interface{}, doc
 		return nil
 	}
 	return c.scrollDocuments("_search/scroll", map[string]interface{}{
-		"scroll": "5m",
+		"scroll":    "5m",
 		"scroll_id": scrollResult.ScrollId,
 	}, docs, scrollResult.ScrollId)
 }

@@ -2,6 +2,7 @@ package elasticsearch
 
 import "encoding/json"
 
+// Status constants for Elasticsearch health
 const (
 	StatusGreen  = "green"
 	StatusYellow = "yellow"

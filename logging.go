@@ -24,7 +24,7 @@ func (d *discard) Infof(_ string, _ ...interface{}) {}
 func (d *discard) Debugf(_ string, _ ...interface{}) {}
 
 // DebugMode will return always false.
-func (d *discard) DebugMode() bool {return false}
+func (d *discard) DebugMode() bool { return false }
 
 // log can be used to print messages. By default, discard all messages.
 var log Logger = &discard{}

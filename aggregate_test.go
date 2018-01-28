@@ -1,8 +1,8 @@
 package elasticsearch
 
 import (
-	"testing"
 	"encoding/json"
+	"testing"
 )
 
 var aggregateClient *Client
@@ -22,7 +22,7 @@ func init() {
 	template, _ := json.Marshal(map[string]interface{}{
 		"index_patterns": []string{"*"},
 		"settings": map[string]interface{}{
-			"number_of_shards": 1,
+			"number_of_shards":   1,
 			"number_of_replicas": 0,
 		},
 		"mappings": map[string]interface{}{
@@ -31,11 +31,11 @@ func init() {
 					map[string]interface{}{
 						"string_fields": map[string]interface{}{
 							"mapping": map[string]interface{}{
-								"type": "keyword",
+								"type":  "keyword",
 								"index": true,
 							},
 							"match_mapping_type": "string",
-							"match": "*",
+							"match":              "*",
 						},
 					},
 				},
