@@ -19,7 +19,7 @@
   - Get documents by query (scroll)
   
 - Bulk
-  - Insert documents (Coming soon)
+  - Insert documents
   
 - Index
   - Delete index
