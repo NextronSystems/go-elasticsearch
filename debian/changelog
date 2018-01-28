@@ -1,3 +1,12 @@
+go-elasticsearch (6.20180128.1) unstable; urgency=medium
+
+  * gofmt
+  * misspell
+  * more comments
+  * go report card
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Sun, 28 Jan 2018 11:32:00 +0200
+
 go-elasticsearch (6.20180128.0) unstable; urgency=medium
 
   * Added travis
