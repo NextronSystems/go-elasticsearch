@@ -21,13 +21,13 @@ func init() {
 
 func TestClient_InsertDocuments(t *testing.T) {
 	docs := map[string]map[string]interface{}{
-		"1": map[string]interface{}{
+		"1": {
 			"field1": "value1",
 		},
-		"2": map[string]interface{}{
+		"2": {
 			"field1": "value2",
 		},
-		"3": map[string]interface{}{
+		"3": {
 			"field1": "value3",
 		},
 	}
@@ -48,11 +48,11 @@ func TestClient_InsertDocuments(t *testing.T) {
 
 func TestClient_InsertDocuments2(t *testing.T) {
 	docs := map[string]map[string]interface{}{
-		"1": map[string]interface{}{
+		"1": {
 			"field1": "value1",
 		},
 		"2": nil, // the error
-		"3": map[string]interface{}{
+		"3": {
 			"field1": "value3",
 		},
 	}
