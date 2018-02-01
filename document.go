@@ -194,7 +194,9 @@ func (c *Client) scrollDocuments(apipath string, req map[string]interface{}, doc
 	if err != nil {
 		return fmt.Errorf("could not scroll documents: %s", err)
 	}
-	if err := json.Unmarshal(res, &scrollResult); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(res))
+	decoder.UseNumber()
+	if err := decoder.Decode(&scrollResult); err != nil {
 		return fmt.Errorf("could not unmarshal scroll result: %s", err)
 	}
 	if scrollId != "" {
