@@ -142,7 +142,7 @@ func (c *Client) UpdateDocuments(index, doctype string, query map[string]interfa
 // DeleteDocument deletes a specific document in a specific index.
 func (c *Client) DeleteDocument(index, doctype, id string, refresh bool) error {
 	apipath := path.Join(index, doctype, id) + "?refresh=" + refreshValue(refresh)
-	if _, err := c.delete(apipath, nil); err != nil {
+	if _, err := c.delete_(apipath, nil); err != nil {
 		return fmt.Errorf("could not update document: %s", err)
 	}
 	return nil
@@ -223,7 +223,7 @@ func (c *Client) deleteScroll(scrollId string) error {
 	if err != nil {
 		return fmt.Errorf("could not marshal the delete scroll query: %s", err)
 	}
-	if _, err := c.delete("_search/scroll", b); err != nil {
+	if _, err := c.delete_("_search/scroll", b); err != nil {
 		return fmt.Errorf("could not delete the scroll: %s", err)
 	}
 	return nil

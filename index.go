@@ -4,7 +4,7 @@ import "fmt"
 
 // DeleteIndex deletes a whole index.
 func (c *Client) DeleteIndex(index string) error {
-	_, err := c.delete(index, nil)
+	_, err := c.delete_(index, nil)
 	if err != nil {
 		return fmt.Errorf("could not delete index: %s", err)
 	}

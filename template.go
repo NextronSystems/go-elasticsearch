@@ -22,7 +22,7 @@ func (c *Client) AddTemplate(id string, template map[string]interface{}) error {
 // DeleteTemplate deletes a template.
 func (c *Client) DeleteTemplate(id string) error {
 	apipath := path.Join("_template", id)
-	if _, err := c.delete(apipath, nil); err != nil {
+	if _, err := c.delete_(apipath, nil); err != nil {
 		return fmt.Errorf("could not delete template: %s", err)
 	}
 	return nil

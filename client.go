@@ -7,7 +7,10 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 )
+
+const sleepOnTooManyRequests = time.Second * 10
 
 // Client is the api client for Elasticsearch.
 type Client struct {
@@ -36,7 +39,7 @@ func (c *Client) Ping() error {
 	return nil
 }
 
-func (c *Client) do(r *http.Request) ([]byte, error) {
+func (c *Client) do(r *http.Request) ([]byte, bool, error) {
 	if log.DebugMode() {
 		b, err := httputil.DumpRequest(r, true)
 		if err != nil {
@@ -47,7 +50,7 @@ func (c *Client) do(r *http.Request) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(r)
 	if err != nil {
-		return nil, fmt.Errorf("could not do request: %s", err)
+		return nil, false, fmt.Errorf("could not do request: %s", err)
 	}
 	defer resp.Body.Close()
 	if log.DebugMode() {
@@ -58,16 +61,19 @@ func (c *Client) do(r *http.Request) ([]byte, error) {
 		log.Debugf("Elasticsearch Response: %s", string(b))
 	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		if body, _ := ioutil.ReadAll(resp.Body); body != nil {
-			return nil, fmt.Errorf("http status %d (%s)", resp.StatusCode, string(body))
+		if resp.StatusCode == http.StatusTooManyRequests {
+			return nil, true, nil
 		}
-		return nil, fmt.Errorf("http status %d", resp.StatusCode)
+		if body, _ := ioutil.ReadAll(resp.Body); body != nil {
+			return nil, false, fmt.Errorf("http status %d (%s)", resp.StatusCode, string(body))
+		}
+		return nil, false, fmt.Errorf("http status %d", resp.StatusCode)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("could not read response body: %s", err)
+		return nil, false, fmt.Errorf("could not read response body: %s", err)
 	}
-	return body, nil
+	return body, false, nil
 }
 
 func (c *Client) post(apipath string, json []byte) ([]byte, error) {
@@ -76,7 +82,15 @@ func (c *Client) post(apipath string, json []byte) ([]byte, error) {
 		return nil, fmt.Errorf("could not prepare post request: %s", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	return c.do(req)
+	b, retry, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+	if retry == true {
+		time.Sleep(sleepOnTooManyRequests)
+		return c.get(apipath, json)
+	}
+	return b, nil
 }
 
 func (c *Client) get(apipath string, json []byte) ([]byte, error) {
@@ -85,7 +99,15 @@ func (c *Client) get(apipath string, json []byte) ([]byte, error) {
 		return nil, fmt.Errorf("could not prepare get request: %s", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	return c.do(req)
+	b, retry, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+	if retry == true {
+		time.Sleep(sleepOnTooManyRequests)
+		return c.get(apipath, json)
+	}
+	return b, nil
 }
 
 func (c *Client) put(apipath string, json []byte) ([]byte, error) {
@@ -94,16 +116,32 @@ func (c *Client) put(apipath string, json []byte) ([]byte, error) {
 		return nil, fmt.Errorf("could not prepare put request: %s", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	return c.do(req)
+	b, retry, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+	if retry == true {
+		time.Sleep(sleepOnTooManyRequests)
+		return c.get(apipath, json)
+	}
+	return b, nil
 }
 
-func (c *Client) delete(apipath string, json []byte) ([]byte, error) {
+func (c *Client) delete_(apipath string, json []byte) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%s", c.baseURL.String(), apipath), bytes.NewReader(json))
 	if err != nil {
 		return nil, fmt.Errorf("could not prepare delete request: %s", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	return c.do(req)
+	b, retry, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+	if retry == true {
+		time.Sleep(sleepOnTooManyRequests)
+		return c.get(apipath, json)
+	}
+	return b, nil
 }
 
 func refreshValue(refresh bool) string {
