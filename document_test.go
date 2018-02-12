@@ -5,6 +5,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	logging "git.bsk/analysis-cockpit/lib/model/logging"
 )
 
 var documentClient *Client
@@ -81,7 +83,8 @@ func TestClient_UpdateDocument(t *testing.T) {
 }
 
 func TestClient_ScrollDocuments(t *testing.T) {
-	for i := 0; i < 1001; i++ {
+	SetLogger(logging.GetLogger())
+	for i := 0; i < 3456; i++ {
 		if err := documentClient.InsertDocument("testclient_scrolldocuments", "doc", fmt.Sprint(i), map[string]interface{}{
 			"field": "value",
 		}, false); err != nil {
@@ -103,8 +106,8 @@ func TestClient_ScrollDocuments(t *testing.T) {
 		counter++
 	}
 	wg.Wait()
-	if counter != 1001 {
-		t.Fatalf("wrong count, expected 1001, got: %d", counter)
+	if counter != 3456 {
+		t.Fatalf("wrong count, expected 3456, got: %d", counter)
 	}
 }
 

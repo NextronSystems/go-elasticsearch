@@ -199,16 +199,16 @@ func (c *Client) scrollDocuments(apipath string, req map[string]interface{}, doc
 	if err := decoder.Decode(&scrollResult); err != nil {
 		return fmt.Errorf("could not unmarshal scroll result: %s", err)
 	}
-	if scrollId != "" {
+	if scrollId != "" && scrollId != scrollResult.ScrollId {
 		if err := c.deleteScroll(scrollId); err != nil {
 			return fmt.Errorf("could not delete scroll: %s", err)
 		}
 	}
+	if len(scrollResult.Hits.Hits) == 0 {
+		return nil
+	}
 	for _, hit := range scrollResult.Hits.Hits {
 		docs <- hit
-	}
-	if scrollId == scrollResult.ScrollId {
-		return nil
 	}
 	return c.scrollDocuments("_search/scroll", map[string]interface{}{
 		"scroll":    "5m",

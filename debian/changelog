@@ -1,3 +1,9 @@
+go-elasticsearch (6.20180212.0) unstable; urgency=medium
+
+  * fixed bug in scroll api
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Mon, 12 Feb 2018 11:15:00 +0200
+
 go-elasticsearch (6.20180205.0) unstable; urgency=medium
 
   * added retries for TooManyRequests
