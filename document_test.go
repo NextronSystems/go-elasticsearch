@@ -5,8 +5,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-
-	logging "git.bsk/analysis-cockpit/lib/model/logging"
 )
 
 var documentClient *Client
@@ -83,7 +81,6 @@ func TestClient_UpdateDocument(t *testing.T) {
 }
 
 func TestClient_ScrollDocuments(t *testing.T) {
-	SetLogger(logging.GetLogger())
 	for i := 0; i < 3456; i++ {
 		if err := documentClient.InsertDocument("testclient_scrolldocuments", "doc", fmt.Sprint(i), map[string]interface{}{
 			"field": "value",

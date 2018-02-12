@@ -1,3 +1,9 @@
+go-elasticsearch (6.20180212.1) unstable; urgency=medium
+
+  * unit test fix
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Mon, 12 Feb 2018 11:28:00 +0200
+
 go-elasticsearch (6.20180212.0) unstable; urgency=medium
 
   * fixed bug in scroll api
