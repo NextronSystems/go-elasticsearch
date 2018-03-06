@@ -1,9 +1,9 @@
 # Simple Elasticsearch 6.x API for Golang
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.org/Codehardt/go-elasticsearch.svg?branch=master)](https://travis-ci.org/Codehardt/go-elasticsearch)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Codehardt/go-elasticsearch)](https://goreportcard.com/report/github.com/Codehardt/go-elasticsearch)
-[![GoDoc](https://godoc.org/github.com/Codehardt/go-elasticsearch?status.svg)](https://godoc.org/github.com/Codehardt/go-elasticsearch)
+[![Build Status](https://travis-ci.org/NextronSystems/go-elasticsearch.svg?branch=master)](https://travis-ci.org/NextronSystems/go-elasticsearch)
+[![Go Report Card](https://goreportcard.com/badge/github.com/NextronSystems/go-elasticsearch)](https://goreportcard.com/report/github.com/NextronSystems/go-elasticsearch)
+[![GoDoc](https://godoc.org/github.com/NextronSystems/go-elasticsearch?status.svg)](https://godoc.org/github.com/NextronSystems/go-elasticsearch)
 
 ## Features
 
