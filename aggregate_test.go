@@ -2,6 +2,7 @@ package elasticsearch
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 )
 
@@ -19,6 +20,7 @@ func init() {
 	aggregateClient.DeleteIndex("testclient_termaggregate")
 	aggregateClient.DeleteIndex("testclient_rangeaggregate")
 	aggregateClient.DeleteIndex("testclient_cardinalityaggregate")
+	aggregateClient.DeleteIndex("testclient_compositeaggregate")
 	template, _ := json.Marshal(map[string]interface{}{
 		"index_patterns": []string{"*"},
 		"settings": map[string]interface{}{
@@ -114,5 +116,20 @@ func TestClient_CardinalityAggregate(t *testing.T) {
 	}
 	if value2 != 0 {
 		t.Fatalf("wrong cardinality, expected 0, got: %d", value2)
+	}
+}
+
+func TestClient_CompositeAggregate(t *testing.T) {
+	for i := 0; i < 100; i++ {
+		aggregateClient.InsertDocument("testclient_compositeaggregate", "doc", fmt.Sprint(i+1), map[string]interface{}{"field1": i + 1}, false)
+	}
+	aggregateClient.Refresh("testclient_compositeaggregate")
+	compositeSize = 60
+	buckets, err := aggregateClient.CompositeAggregate("testclient_compositeaggregate", "doc", nil, "field1")
+	if err != nil {
+		t.Fatalf("could not composite aggregate: %s", err)
+	}
+	if len(buckets) != 100 {
+		t.Fatalf("wrong bucket length, expected %d, got: %d", 100, len(buckets))
 	}
 }

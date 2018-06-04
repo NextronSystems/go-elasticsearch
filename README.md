@@ -24,16 +24,17 @@
   
 - Index
   - Delete index
-  - Refresh index
+  - Refresh index 
   - Add Template
   - Delete Template
   
 - Aggregate
-  - Term Aggregate (Get most frequent values of a field)
-  - Range Aggregate (Get min- and max-value of a field)
-  - Cardinality Aggregate (Get unique count of a field)
+  - Term Aggregate (Get most frequent values of a field) [Terms Aggregation](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html)
+  - Range Aggregate (Get min- and max-value of a field) [Range Aggregation](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html)
+  - Cardinality Aggregate (Get unique count of a field) [Cardinality Aggregation](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html)
+  - Composite Term Aggregate (Get all values of a field) [Composite Aggregation](https://www.elastic.co/guide/en/elasticsearch/reference/master/search-aggregations-bucket-composite-aggregation.html)
   
 - Other
   - Connection test
-  - Health status
+  - Health status [Cluster Health](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html)
   - Optional debug logs
