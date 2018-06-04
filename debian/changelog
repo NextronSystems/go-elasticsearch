@@ -1,8 +1,8 @@
-go-elasticsearch (6.20180604.0) unstable; urgency=medium
+go-elasticsearch (6.20180604.1) unstable; urgency=medium
 
   * added composite aggregation
 
- -- Marcel Gebhardt <marcel@codehardt.de>  Mon,  4 Jun 2018 09:44:00 +0200
+ -- Marcel Gebhardt <marcel@codehardt.de>  Mon,  4 Jun 2018 09:51:00 +0200
 
 go-elasticsearch (6.20180212.1) unstable; urgency=medium
 

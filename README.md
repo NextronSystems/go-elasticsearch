@@ -38,3 +38,5 @@
   - Connection test
   - Health status [Cluster Health](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html)
   - Optional debug logs
+
+## Tested with Elasticsearch 6.1.1

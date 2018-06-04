@@ -224,6 +224,7 @@ func (c *Client) compositeAggregateAfter(index, doctype string, query map[string
 		} `json:"aggregations"`
 	}{}
 	decoder := json.NewDecoder(bytes.NewReader(res))
+	decoder.UseNumber()
 	if err := decoder.Decode(&result); err != nil {
 		return nil, fmt.Errorf("could not decode result: %s", err)
 	}
