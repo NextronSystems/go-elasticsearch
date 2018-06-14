@@ -1,3 +1,9 @@
+go-elasticsearch (6.20180614.0) unstable; urgency=medium
+
+  * added repository and snapshot functions
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Thu, 14 Jun 2018 11:54:00 +0200
+
 go-elasticsearch (6.20180604.3) unstable; urgency=medium
 
   * fixed go import path
