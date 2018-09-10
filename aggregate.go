@@ -242,3 +242,60 @@ func (c *Client) compositeAggregateAfter(index, doctype string, query map[string
 	}
 	return compositeResult, nil
 }
+
+type DateHistogramInterval string
+
+const (
+	DateHistogramIntervalYear   = "year"
+	DateHistogramIntervalMonth  = "month"
+	DateHistogramIntervalDay    = "day"
+	DateHistogramIntervalHour   = "hour"
+	DateHistogramIntervalMinute = "minute"
+	DateHistogramIntervalSecond = "second"
+)
+
+func (c *Client) DateHistogramAggregate(index, doctype string, query map[string]interface{}, field string, interval DateHistogramInterval) ([]*Bucket, error) {
+	var dateHistogramResult []*Bucket
+	request := map[string]interface{}{
+		"size": 0,
+		"aggs": map[string]interface{}{
+			"my_datehistogram": map[string]interface{}{
+				"date_histogram": map[string]interface{}{
+					"field":    field,
+					"interval": string(interval),
+				},
+			},
+		},
+	}
+	if query != nil {
+		request["query"] = query
+	}
+	b, err := json.Marshal(request)
+	if err != nil {
+		return nil, fmt.Errorf("could not marshal request: %s", err)
+	}
+	apipath := path.Join(index, doctype) + "/_search"
+	res, err := c.post(apipath, b)
+	if err != nil {
+		return nil, fmt.Errorf("could not get aggregations: %s", err)
+	}
+	result := struct {
+		Aggregations struct {
+			MyDateHistogram struct {
+				DateHistogram []*struct {
+					Key   map[string]interface{} `json:"key"`
+					Count int                    `json:"doc_count"`
+				} `json:"date_histogram"`
+			} `json:"my_datehistogram"`
+		} `json:"aggregations"`
+	}{}
+	decoder := json.NewDecoder(bytes.NewReader(res))
+	decoder.UseNumber()
+	if err := decoder.Decode(&result); err != nil {
+		return nil, fmt.Errorf("could not decode result: %s", err)
+	}
+	for _, bucket := range result.Aggregations.MyDateHistogram.DateHistogram {
+		dateHistogramResult = append(dateHistogramResult, &Bucket{Key: bucket.Key[field], Count: bucket.Count})
+	}
+	return dateHistogramResult, nil
+}
