@@ -283,8 +283,8 @@ func (c *Client) DateHistogramAggregate(index, doctype string, query map[string]
 		Aggregations struct {
 			MyDateHistogram struct {
 				DateHistogram []*struct {
-					Key   map[string]interface{} `json:"key"`
-					Count int                    `json:"doc_count"`
+					Key   int64 `json:"key"`
+					Count int   `json:"doc_count"`
 				} `json:"buckets"`
 			} `json:"my_datehistogram"`
 		} `json:"aggregations"`
@@ -295,7 +295,7 @@ func (c *Client) DateHistogramAggregate(index, doctype string, query map[string]
 		return nil, fmt.Errorf("could not decode result: %s", err)
 	}
 	for _, bucket := range result.Aggregations.MyDateHistogram.DateHistogram {
-		dateHistogramResult = append(dateHistogramResult, &Bucket{Key: bucket.Key[field], Count: bucket.Count})
+		dateHistogramResult = append(dateHistogramResult, &Bucket{Key: bucket.Key, Count: bucket.Count})
 	}
 	return dateHistogramResult, nil
 }
