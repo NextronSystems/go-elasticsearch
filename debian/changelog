@@ -1,4 +1,4 @@
-go-elasticsearch (6.20180910.1) unstable; urgency=medium
+go-elasticsearch (6.20180910.2) unstable; urgency=medium
 
   * added datehistogram aggregation
 
