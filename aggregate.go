@@ -285,7 +285,7 @@ func (c *Client) DateHistogramAggregate(index, doctype string, query map[string]
 				DateHistogram []*struct {
 					Key   map[string]interface{} `json:"key"`
 					Count int                    `json:"doc_count"`
-				} `json:"date_histogram"`
+				} `json:"buckets"`
 			} `json:"my_datehistogram"`
 		} `json:"aggregations"`
 	}{}
