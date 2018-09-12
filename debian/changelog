@@ -1,3 +1,9 @@
+go-elasticsearch (6.20180912.0) unstable; urgency=medium
+
+  * added auto datehistogram aggregation
+
+ -- Marcel Gebhardt <marcel@codehardt.de>  Thu, 12 Sep 2018 16:14:00 +0200
+
 go-elasticsearch (6.20180910.2) unstable; urgency=medium
 
   * added datehistogram aggregation
