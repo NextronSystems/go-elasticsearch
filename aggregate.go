@@ -252,20 +252,36 @@ const (
 	DateHistogramIntervalHour   = "hour"
 	DateHistogramIntervalMinute = "minute"
 	DateHistogramIntervalSecond = "second"
+	DateHistogramIntervalAuto   = "auto"
 )
 
-func (c *Client) DateHistogramAggregate(index, doctype string, query map[string]interface{}, field string, interval DateHistogramInterval) ([]*Bucket, error) {
+func (c *Client) DateHistogramAggregate(index, doctype string, query map[string]interface{}, field string, interval DateHistogramInterval, buckets int) ([]*Bucket, error) {
 	var dateHistogramResult []*Bucket
-	request := map[string]interface{}{
-		"size": 0,
-		"aggs": map[string]interface{}{
-			"my_datehistogram": map[string]interface{}{
-				"date_histogram": map[string]interface{}{
-					"field":    field,
-					"interval": string(interval),
+	var request map[string]interface{}
+	if interval == DateHistogramIntervalAuto {
+		request = map[string]interface{}{
+			"size": 0,
+			"aggs": map[string]interface{}{
+				"my_datehistogram": map[string]interface{}{
+					"auto_date_histogram": map[string]interface{}{
+						"field":   field,
+						"buckets": buckets,
+					},
 				},
 			},
-		},
+		}
+	} else {
+		request = map[string]interface{}{
+			"size": 0,
+			"aggs": map[string]interface{}{
+				"my_datehistogram": map[string]interface{}{
+					"date_histogram": map[string]interface{}{
+						"field":    field,
+						"interval": string(interval),
+					},
+				},
+			},
+		}
 	}
 	if query != nil {
 		request["query"] = query
