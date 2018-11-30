@@ -30,7 +30,7 @@ func TestClient_InsertGetDeleteDocument(t *testing.T) {
 		"field2": "value2",
 		"field3": "value3",
 	}
-	if err := documentClient.InsertDocument("testclient_insertgetdeletedocument", "doc", "1", document, true); err != nil {
+	if err := documentClient.InsertDocument("testclient_insertgetdeletedocument", "doc", "1", document, RefreshTrue); err != nil {
 		t.Fatalf("could not insert document: %s", err)
 	}
 	result, err := documentClient.GetDocument("testclient_insertgetdeletedocument", "doc", "1")
@@ -44,7 +44,7 @@ func TestClient_InsertGetDeleteDocument(t *testing.T) {
 	} else {
 		t.Fatal("no _source")
 	}
-	if err := documentClient.DeleteDocument("testclient_insertgetdeletedocument", "doc", "1", true); err != nil {
+	if err := documentClient.DeleteDocument("testclient_insertgetdeletedocument", "doc", "1", RefreshTrue); err != nil {
 		t.Fatalf("could not delete document: %s", err)
 	}
 	_, err = documentClient.GetDocument("testclient_insertgetdeletedocument", "doc", "1")
@@ -61,10 +61,10 @@ func TestClient_UpdateDocument(t *testing.T) {
 		"field2": "value2",
 		"field3": "value3",
 	}
-	if err := documentClient.InsertDocument("testclient_updatedocument", "doc", "1", document, true); err != nil {
+	if err := documentClient.InsertDocument("testclient_updatedocument", "doc", "1", document, RefreshTrue); err != nil {
 		t.Fatalf("could not insert document: %s", err)
 	}
-	if err := documentClient.UpdateDocument("testclient_updatedocument", "doc", "1", "ctx._source.field1 = params.value", map[string]interface{}{"value": "valueX"}, true); err != nil {
+	if err := documentClient.UpdateDocument("testclient_updatedocument", "doc", "1", "ctx._source.field1 = params.value", map[string]interface{}{"value": "valueX"}, RefreshTrue); err != nil {
 		t.Fatalf("could not update document: %s", err)
 	}
 	result, err := documentClient.GetDocument("testclient_updatedocument", "doc", "1")
@@ -84,7 +84,7 @@ func TestClient_ScrollDocuments(t *testing.T) {
 	for i := 0; i < 3456; i++ {
 		if err := documentClient.InsertDocument("testclient_scrolldocuments", "doc", fmt.Sprint(i), map[string]interface{}{
 			"field": "value",
-		}, false); err != nil {
+		}, RefreshFalse); err != nil {
 			t.Fatalf("could not insert document: %s", err)
 		}
 	}
@@ -111,7 +111,7 @@ func TestClient_ScrollDocuments(t *testing.T) {
 func TestClient_ScrollDocuments2(t *testing.T) {
 	if err := documentClient.InsertDocument("testclient_scrolldocuments2", "doc", "1", map[string]interface{}{
 		"field": "value",
-	}, false); err != nil {
+	}, RefreshFalse); err != nil {
 		t.Fatalf("could not insert document: %s", err)
 	}
 	documentClient.Refresh("testclient_scrolldocuments2")

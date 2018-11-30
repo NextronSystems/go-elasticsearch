@@ -144,9 +144,23 @@ func (c *Client) delete_(apipath string, json []byte) ([]byte, error) {
 	return b, nil
 }
 
-func refreshValue(refresh bool) string {
-	if refresh {
-		return "wait_for"
+// Refresh parameter for most requests, default should be RefreshFalse,
+// but if changes have to be done immediately, then you should use RefreshTrue
+// or RefreshWaitFor, see: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-refresh.html
+type Refresh string
+
+const (
+	// RefreshTrue refreshes the relevant primary and replica shards immediately
+	RefreshTrue Refresh = "true"
+	// RefreshWaitFor does not force a refresh, instead it waits for the next refresh specified by 'index.refresh_interval'
+	RefreshWaitFor Refresh = "wait_for"
+	// RefreshFalse is the default behaviour, does not refresh anything and is the fastest solution
+	RefreshFalse Refresh = "false"
+)
+
+func getRefreshString(r Refresh) string {
+	if r == RefreshTrue || r == RefreshWaitFor {
+		return string(r)
 	}
-	return "false"
+	return string(RefreshFalse)
 }

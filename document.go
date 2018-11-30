@@ -26,12 +26,12 @@ func (o *Order) MarshalJSON() ([]byte, error) {
 // If refresh is set to true, elasticsearch waits until all changes were done.
 // If multiple inserts are done and all changes have to be done before continuing,
 // set refresh to false and call Refresh() after.
-func (c *Client) InsertDocument(index, doctype, id string, document map[string]interface{}, refresh bool) error {
+func (c *Client) InsertDocument(index, doctype, id string, document map[string]interface{}, refresh Refresh) error {
 	b, err := json.Marshal(document)
 	if err != nil {
 		return fmt.Errorf("could not marshal the document: %s", err)
 	}
-	apipath := path.Join(index, doctype, id) + "?refresh=" + refreshValue(refresh)
+	apipath := path.Join(index, doctype, id) + "?refresh=" + getRefreshString(refresh)
 	if _, err := c.put(apipath, b); err != nil {
 		return fmt.Errorf("could not insert document: %s", err)
 	}
@@ -92,7 +92,7 @@ func (c *Client) GetDocuments(index, doctype string, query map[string]interface{
 // It's recommended to use parameterized update scripts and pass the parameters in 'params'.
 // Then elasticsearch has to compile the script only once. Elasticsearch will also return
 // an error, if to many different scripts are executed in a small time interval.
-func (c *Client) UpdateDocument(index, doctype, id string, painlessScript string, params map[string]interface{}, refresh bool) error {
+func (c *Client) UpdateDocument(index, doctype, id string, painlessScript string, params map[string]interface{}, refresh Refresh) error {
 	script := map[string]interface{}{
 		"source": painlessScript,
 		"lang":   "painless",
@@ -106,7 +106,7 @@ func (c *Client) UpdateDocument(index, doctype, id string, painlessScript string
 	if err != nil {
 		return fmt.Errorf("could not marshal the changes: %s", err)
 	}
-	apipath := path.Join(index, doctype, id) + "/_update?refresh=" + refreshValue(refresh)
+	apipath := path.Join(index, doctype, id) + "/_update?refresh=" + getRefreshString(refresh)
 	if _, err := c.post(apipath, b); err != nil {
 		return fmt.Errorf("could not update document: %s", err)
 	}
@@ -117,7 +117,7 @@ func (c *Client) UpdateDocument(index, doctype, id string, painlessScript string
 // It's recommended to use parameterized update scripts and pass the parameters in 'params'.
 // Then elasticsearch has to compile the script only once. Elasticsearch will also return
 // an error, if to many different scripts are executed in a small time interval.
-func (c *Client) UpdateDocuments(index, doctype string, query map[string]interface{}, painlessScript string, params map[string]interface{}) error {
+func (c *Client) UpdateDocuments(index, doctype string, query map[string]interface{}, painlessScript string, params map[string]interface{}, refresh Refresh) error {
 	script := map[string]interface{}{
 		"source": painlessScript,
 		"lang":   "painless",
@@ -132,7 +132,7 @@ func (c *Client) UpdateDocuments(index, doctype string, query map[string]interfa
 	if err != nil {
 		return fmt.Errorf("could not marshal the query: %s", err)
 	}
-	apipath := path.Join(index, doctype) + "/_update_by_query?conflicts=proceed"
+	apipath := path.Join(index, doctype) + "/_update_by_query?conflicts=proceed&refresh=" + getRefreshString(refresh)
 	if _, err := c.post(apipath, b); err != nil {
 		return fmt.Errorf("could not update documents: %s", err)
 	}
@@ -140,8 +140,8 @@ func (c *Client) UpdateDocuments(index, doctype string, query map[string]interfa
 }
 
 // DeleteDocument deletes a specific document in a specific index.
-func (c *Client) DeleteDocument(index, doctype, id string, refresh bool) error {
-	apipath := path.Join(index, doctype, id) + "?refresh=" + refreshValue(refresh)
+func (c *Client) DeleteDocument(index, doctype, id string, refresh Refresh) error {
+	apipath := path.Join(index, doctype, id) + "?refresh=" + getRefreshString(refresh)
 	if _, err := c.delete_(apipath, nil); err != nil {
 		return fmt.Errorf("could not update document: %s", err)
 	}
@@ -149,14 +149,14 @@ func (c *Client) DeleteDocument(index, doctype, id string, refresh bool) error {
 }
 
 // DeleteDocuments deletes multiple documents in a specific index. A query is optional.
-func (c *Client) DeleteDocuments(index, doctype string, query map[string]interface{}) error {
+func (c *Client) DeleteDocuments(index, doctype string, query map[string]interface{}, refresh Refresh) error {
 	b, err := json.Marshal(map[string]interface{}{
 		"query": query,
 	})
 	if err != nil {
 		return fmt.Errorf("could not marshal the query: %s", err)
 	}
-	apipath := path.Join(index, doctype) + "/_delete_by_query"
+	apipath := path.Join(index, doctype) + "/_delete_by_query?refresh=" + getRefreshString(refresh)
 	if _, err := c.post(apipath, b); err != nil {
 		return fmt.Errorf("could not delete by query: %s", err)
 	}

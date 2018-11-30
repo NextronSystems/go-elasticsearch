@@ -51,15 +51,15 @@ func TestClient_TermAggregate(t *testing.T) {
 	aggregateClient.InsertDocument("testclient_termaggregate", "doc", "1", map[string]interface{}{
 		"field1": "value1",
 		"field2": "value2",
-	}, true)
+	}, RefreshTrue)
 	aggregateClient.InsertDocument("testclient_termaggregate", "doc", "2", map[string]interface{}{
 		"field1": "value1",
 		"field2": "value3",
-	}, true)
+	}, RefreshTrue)
 	aggregateClient.InsertDocument("testclient_termaggregate", "doc", "3", map[string]interface{}{
 		"field1": "value1",
 		"field2": "value4",
-	}, true)
+	}, RefreshTrue)
 	result, err := aggregateClient.TermAggregate("testclient_termaggregate", "doc", nil, NewTermAggregations([]*TermAggregation{
 		{Field: "field1", Size: 10},
 		{Field: "field2", Size: 10},
@@ -78,10 +78,10 @@ func TestClient_TermAggregate(t *testing.T) {
 }
 
 func TestClient_RangeAggregate(t *testing.T) {
-	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "1", map[string]interface{}{"field1": 10}, true)
-	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "2", map[string]interface{}{"field1": 100}, true)
-	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "3", map[string]interface{}{"field1": 1000}, true)
-	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "4", map[string]interface{}{"field1": 1}, true)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "1", map[string]interface{}{"field1": 10}, RefreshTrue)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "2", map[string]interface{}{"field1": 100}, RefreshTrue)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "3", map[string]interface{}{"field1": 1000}, RefreshTrue)
+	aggregateClient.InsertDocument("testclient_rangeaggregate", "doc", "4", map[string]interface{}{"field1": 1}, RefreshTrue)
 	minValue, maxValue, err := aggregateClient.RangeAggregate("testclient_rangeaggregate", "doc", nil, "field1")
 	if err != nil {
 		t.Fatalf("could not range aggregate: %s", err)
@@ -99,10 +99,10 @@ func TestClient_RangeAggregate(t *testing.T) {
 }
 
 func TestClient_CardinalityAggregate(t *testing.T) {
-	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "1", map[string]interface{}{"field1": 10}, true)
-	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "2", map[string]interface{}{"field1": 10}, true)
-	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "3", map[string]interface{}{"field1": 100}, true)
-	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "4", map[string]interface{}{"field1": 1}, true)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "1", map[string]interface{}{"field1": 10}, RefreshTrue)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "2", map[string]interface{}{"field1": 10}, RefreshTrue)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "3", map[string]interface{}{"field1": 100}, RefreshTrue)
+	aggregateClient.InsertDocument("testclient_cardinalityaggregate", "doc", "4", map[string]interface{}{"field1": 1}, RefreshTrue)
 	value, err := aggregateClient.CardinalityAggregate("testclient_cardinalityaggregate", "doc", nil, "field1")
 	if err != nil {
 		t.Fatalf("could not cardinality aggregate: %s", err)
@@ -121,7 +121,7 @@ func TestClient_CardinalityAggregate(t *testing.T) {
 
 func TestClient_CompositeAggregate(t *testing.T) {
 	for i := 0; i < 100; i++ {
-		aggregateClient.InsertDocument("testclient_compositeaggregate", "doc", fmt.Sprint(i+1), map[string]interface{}{"field1": i + 1}, false)
+		aggregateClient.InsertDocument("testclient_compositeaggregate", "doc", fmt.Sprint(i+1), map[string]interface{}{"field1": i + 1}, RefreshFalse)
 	}
 	aggregateClient.Refresh("testclient_compositeaggregate")
 	compositeSize = 60
